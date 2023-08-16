@@ -17,13 +17,15 @@ export default class UserSignUpPage extends Component {
     }
     onClickSignup = event => {
         event.preventDefault();
+        const {username, displayName, password} = this.state;
         const body = {
-            username: this.state.username,
-            displayName: this.state.displayName,
-            password: this.state.password
-        }
-        axios.post("http://localhost:8080/api/1.0/users", body)
-    }
+            username,
+            displayName,
+            password
+        };
+
+        axios.post("/api/1.0/users", body)
+    };
 
     // onChangeUsername = event => {
     //     this.setState({
@@ -48,26 +50,32 @@ export default class UserSignUpPage extends Component {
     
     render() {
     return (
-        <form>
-            <h1>Sign Up</h1>
-            <div>
-                <label>Username</label>
-                <input name='username' onChange={this.onChange}/>
-            </div>
-            <div>
-                <label>Display Name</label>
-                <input name='displayName' onChange={this.onChange}/>
-            </div>
-            <div>
-                <label>Password</label>
-                <input name='password' type='password' onChange={this.onChange}/>
-            </div>
-            <div>
-                <label>Password Repeat</label>
-                <input name='passwordRepeat' type='password' onChange={this.onChange}/>
-            </div>
-            <button onClick={this.onClickSignup}>Sing Up</button>
-        </form>
+        <div className='container'>
+            <form>
+                <h1 className='text-center'>Sign Up</h1>
+                <div className='form-group'>
+                    <label>Username</label>
+                    <input name='username' className='form-control' onChange={this.onChange}/>
+                </div>
+                <div className='form-group'>
+                    <label>Display Name</label>
+                    <input name='displayName' className='form-control' onChange={this.onChange}/>
+                </div>
+                <div className='form-group'>
+                    <label>Password</label>
+                    <input name='password' type='password' className='form-control' onChange={this.onChange}/>
+                </div>
+                <div className='form-group'>
+                    <label>Password Repeat</label>
+                    <input name='passwordRepeat' type='password' className='form-control' onChange={this.onChange}/>
+                </div>
+                <div className='text-center'>
+                    <button className='btn btn-primary' onClick={this.onClickSignup}>
+                        Sing Up
+                    </button>
+                </div>
+            </form>
+        </div>
     )
   }
 }
