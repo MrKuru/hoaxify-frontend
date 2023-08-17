@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
-import axios from 'axios';
+import { signup } from '../api/apiCalls';
 
 export default class UserSignUpPage extends Component {
     state = {
         username: null,
         displayName: null,
         password: null,
-        passwordRepeat: null
+        passwordRepeat: null,
+        pendingApiCall: false
     };
 
     onChange = event  => {
@@ -15,7 +16,7 @@ export default class UserSignUpPage extends Component {
             [name]: value
         })
     }
-    onClickSignup = event => {
+    onClickSignup = async event => {
         event.preventDefault();
         const {username, displayName, password} = this.state;
         const body = {
@@ -23,31 +24,14 @@ export default class UserSignUpPage extends Component {
             displayName,
             password
         };
+        this.setState({pendingApiCall: true});
 
-        axios.post("/api/1.0/users", body)
+        try{
+            const response = await signup(body);
+        } catch(error) {
+        }
+        this.setState({pendingApiCall: false});
     };
-
-    // onChangeUsername = event => {
-    //     this.setState({
-    //         username: event.target.value
-    //     });
-    // };
-    // onChangeDisplayName = event => {
-    //     this.setState({
-    //         displayName: event.target.value
-    //     });
-    // };
-    // onChangePassword = event => {
-    //     this.setState({
-    //         password: event.target.value
-    //     });
-    // };
-    // onChangePasswordRepeat = event => {
-    //     this.setState({
-    //         passwordRepeat: event.target.value
-    //     });
-    // };
-    
     render() {
     return (
         <div className='container'>
@@ -70,8 +54,8 @@ export default class UserSignUpPage extends Component {
                     <input name='passwordRepeat' type='password' className='form-control' onChange={this.onChange}/>
                 </div>
                 <div className='text-center'>
-                    <button className='btn btn-primary' onClick={this.onClickSignup}>
-                        Sing Up
+                    <button className='btn btn-primary' onClick={this.onClickSignup} disabled={this.state.pendingApiCall}>
+                        {this.state.pendingApiCall && <span className='spinner-border spinner-border-sm'></span>}Sing Up
                     </button>
                 </div>
             </form>
