@@ -24,13 +24,13 @@ export default class UserSignUpPage extends Component {
             displayName,
             password
         };
-        this.setState({pendingApiCall: true});
+        this.setState({ pendingApiCall: true });
 
         try{
             const response = await signup(body);
         } catch(error) {
         }
-        this.setState({pendingApiCall: false});
+        this.setState({ pendingApiCall: false });
     };
     render() {
     return (
