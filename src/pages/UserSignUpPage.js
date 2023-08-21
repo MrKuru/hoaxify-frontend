@@ -16,6 +16,15 @@ export default class UserSignUpPage extends Component {
     const { name, value } = event.target;
     const errors = { ...this.state.errors };
     errors[name] = undefined;
+    if (name == 'password' || name == 'passwordRepeat'){
+      if(name == 'password' && value != this.state.passwordRepeat){
+        errors.passwordRepeat = "Password mismatch";
+      }else if( name == "passwordRepeat" && value != this.state.password){
+        errors.passwordRepeat = "Password mismatch";
+      }else {
+        errors.passwordRepeat = undefined;
+      }
+    }
     this.setState({
       [name]: value,
       errors,
@@ -77,7 +86,7 @@ export default class UserSignUpPage extends Component {
             <button
               className="btn btn-primary"
               onClick={this.onClickSignup}
-              disabled={pendingApiCall}
+              disabled={pendingApiCall || passwordRepeat != undefined}
             >
               {pendingApiCall && (
                 <span className="spinner-border spinner-border-sm"></span>
