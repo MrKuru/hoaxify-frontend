@@ -1,65 +1,92 @@
-import React, { Component } from 'react'
-import { signup } from '../api/apiCalls';
+import React, { Component } from "react";
+import { signup } from "../api/apiCalls";
+import Input from "../components/input";
 
 export default class UserSignUpPage extends Component {
-    state = {
-        username: null,
-        displayName: null,
-        password: null,
-        passwordRepeat: null,
-        pendingApiCall: false
-    };
+  state = {
+    username: null,
+    displayName: null,
+    password: null,
+    passwordRepeat: null,
+    pendingApiCall: false,
+    errors: {},
+  };
 
-    onChange = event  => {
-        const {name, value} = event.target;
-        this.setState({
-            [name]: value
-        })
+  onChange = (event) => {
+    const { name, value } = event.target;
+    const errors = { ...this.state.errors };
+    errors[name] = undefined;
+    this.setState({
+      [name]: value,
+      errors,
+    });
+  };
+  onClickSignup = async (event) => {
+    event.preventDefault();
+    const { username, displayName, password } = this.state;
+    const body = {
+      username,
+      displayName,
+      password,
+    };
+    this.setState({ pendingApiCall: true });
+
+    try {
+      const response = await signup(body);
+    } catch (error) {
+      if (error.response.data.validationErrors) {
+        this.setState({ errors: error.response.data.validationErrors });
+      }
     }
-    onClickSignup = async event => {
-        event.preventDefault();
-        const {username, displayName, password} = this.state;
-        const body = {
-            username,
-            displayName,
-            password
-        };
-        this.setState({ pendingApiCall: true });
-
-        try{
-            const response = await signup(body);
-        } catch(error) {
-        }
-        this.setState({ pendingApiCall: false });
-    };
-    render() {
+    this.setState({ pendingApiCall: false });
+  };
+  render() {
+    const { pendingApiCall, errors } = this.state;
+    const { username, displayName, password, passwordRepeat } = errors;
     return (
-        <div className='container'>
-            <form>
-                <h1 className='text-center'>Sign Up</h1>
-                <div className='form-group'>
-                    <label>Username</label>
-                    <input name='username' className='form-control' onChange={this.onChange}/>
-                </div>
-                <div className='form-group'>
-                    <label>Display Name</label>
-                    <input name='displayName' className='form-control' onChange={this.onChange}/>
-                </div>
-                <div className='form-group'>
-                    <label>Password</label>
-                    <input name='password' type='password' className='form-control' onChange={this.onChange}/>
-                </div>
-                <div className='form-group'>
-                    <label>Password Repeat</label>
-                    <input name='passwordRepeat' type='password' className='form-control' onChange={this.onChange}/>
-                </div>
-                <div className='text-center'>
-                    <button className='btn btn-primary' onClick={this.onClickSignup} disabled={this.state.pendingApiCall}>
-                        {this.state.pendingApiCall && <span className='spinner-border spinner-border-sm'></span>}Sing Up
-                    </button>
-                </div>
-            </form>
-        </div>
-    )
+      <div className="container">
+        <form>
+          <h1 className="text-center">Sign Up</h1>
+          <Input
+            name="username"
+            label="Username"
+            error={username}
+            onChange={this.onChange}
+          ></Input>
+          <Input
+            name="displayName"
+            label="Display Name"
+            error={displayName}
+            onChange={this.onChange}
+          ></Input>
+          <Input
+            name="password"
+            label="Password"
+            error={password}
+            onChange={this.onChange}
+            type="password"
+          ></Input>
+          <Input
+            name="passwordRepeat"
+            label="Password Repeat"
+            error={passwordRepeat}
+            onChange={this.onChange}
+            type="password"
+          ></Input>
+          <div className="text-center">
+            <button
+              className="btn btn-primary"
+              onClick={this.onClickSignup}
+              disabled={pendingApiCall}
+            >
+              {pendingApiCall && (
+                <span className="spinner-border spinner-border-sm"></span>
+              )}
+              Sing Up
+            </button>
+          </div>
+        </form>
+      </div>
+    );
   }
 }
